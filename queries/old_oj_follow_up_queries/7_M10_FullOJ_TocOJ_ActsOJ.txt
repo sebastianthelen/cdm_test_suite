@@ -1,0 +1,49 @@
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+ASK
+
+WHERE 
+{
+	# FULL OJ WORK
+	?wFull cdm:work_id_document "oj:JOC_2010_256_E";
+		a cdm:official-journal;
+		cdm:work_has_expression ?eFull;
+
+	?eFull cdm:expression_manifested_by_manifestation ?mFullFMX4;
+		cdm:expression_manifested_by_manifestation ?mFullPrint;
+		cdm:expression_manifested_by_manifestation ?mFullPdfA1a;
+		cdm:expression_manifested_by_manifestation ?mFullXhtml;
+		cdm:expression_manifested_by_manifestation ?mFullPdfx.
+	?mFullFMX4 cdm:manifestation_type "fmx4".
+	?mFullPrint cdm:manifestation_type "print".
+	?mFullPdfA1a cdm:manifestation_type "pdfa1a".
+	?mFullXtml cdm:manifestation_type "xhtml".
+	# ?mFullPdfx cdm:manifestation_type "pdfx".
+  
+   # TOC OJ WORK
+	?wTOC a cdm:table-of-contents;
+		cdm:work_part_of_work ?wFull;
+		cdm:work_has_expression ?eTOC.
+	?eTOC cdm:expression_manifested_by_manifestation ?mTOCXhtml;
+		cdm:expression_manifested_by_manifestation ?mTOCPrint.
+	?mTOCXhtml cdm:manifestation_type "xhtml".
+	?mTOCPrint cdm:manifestation_type "print".
+
+	 # ACT OJ WORK
+   ?wAct a cdm:work;
+		cdm:resource_legal_published_in_official-journal ?wFull;
+		cdm:work_has_expression ?eAct.
+   ?eAct cdm:expression_manifested_by_manifestation ?mActXhtml;
+		cdm:expression_manifested_by_manifestation ?mActFMX4;
+		cdm:expression_manifested_by_manifestation ?mActPrint;
+		cdm:expression_manifested_by_manifestation ?mActPdfA1a;
+	{
+		?wAct cdm:cdm:work_has_expression ?e.
+		FILTER NOT EXISTS (?e cdm:expression_manifested_by_manifestation ?m)
+	}
+	?mActXtml cdm:manifestation_type "xhtml".
+	?mActFMX4 cdm:manifestation_type "fmx4".
+	?mActPrint cdm:manifestation_type "print".
+	?mActPdfA1a cdm:manifestation_type "pdfa1a".
+}

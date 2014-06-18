@@ -1,0 +1,26 @@
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+ASK
+
+WHERE 
+{
+	# FULL OJ WORK
+	?wFull cdm:work_id_document "oj:JOC_2010_256_E";
+		a cdm:official-journal;
+		cdm:work_has_expression ?eFull.
+	?eFull cdm:expression_manifested_by_manifestation ?mFullPdfA1a;
+		cdm:expression_manifested_by_manifestation ?mFullPdfx;
+		cdm:expression_manifested_by_manifestation ?mFullPrint.
+	?mFullPdfA1a cdm:manifestation_type "pdfa1a".
+	# ?mFullPdfx cdm:manifestation_type "pdfx".
+	?mFullPrint cdm:manifestation_type "print".
+
+   # SIGNATURE WORK XAdES-A
+   ?wSigA a cdm:signature_digital;
+		cdm:signature_digital_type "XAdES-A";
+		cdm:work_has_expression ?eSigA;
+		cdm:signature_digital_signs_manifestation ?mFull.
+   ?eSigA cdm:expression_manifested_by_manifestation ?mSigA.
+   ?mSigA cdm:manifestation_type "xml".
+}

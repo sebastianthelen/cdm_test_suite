@@ -1,0 +1,58 @@
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX at: <http://publications.europa.eu/ontology/authority/>
+PREFIX ORACLE_SEM_FS_NS: <http://oracle.com/semtech#ALLOW_DUP=T,midtier_cache,DEGREE=8,qid=456>
+
+SELECT 
+?uri ?date ?title ?lang ?mtype ?thumbnail
+(group_concat(distinct ?pid;separator=";") as ?ids) 
+(group_concat(distinct ?clabel;separator=";") as ?collections) 
+(group_concat(distinct ?alabel;separator=";") as ?authors)
+(group_concat(distinct ?slabel;separator=";") as ?subjects) 
+(group_concat(distinct ?item;separator=";") as ?documents) 
+{
+SELECT distinct ?uri ?pid ?clabel ?alabel ?slabel ?date ?title ?lang ?mtype ?item ?thumbnail
+WHERE {
+
+?uri cdm:work_date_document ?date;
+   cdm:work_part_of_collection_document ?coll;
+   cdm:work_created_by_agent ?author;
+   cdm:is_about ?subject;
+   cdm:work_id_document ?pid.
+
+?e cdm:expression_belongs_to_work ?s;
+   cdm:expression_uses_language ?l;
+   cdm:expression_title ?title.
+
+?l dc:identifier ?lang;
+   at:op-mapped-code ?code;
+   skos:prefLabel ?llabel.
+?code dc:source "iso-639-1"; at:legacy-code ?lcode.
+
+?subject skos:prefLabel ?slabel.
+?coll skos:prefLabel ?clabel.
+?author skos:prefLabel ?alabel.
+
+?m cdm:manifestation_manifests_expression ?ex;
+   cdm:manifestation_type ?mtype.
+
+?ce owl:sameAs ?ex; owl:sameAs ?e.
+?cm owl:sameAs ?m; cdm:manifestation_has_item ?item.
+
+
+OPTIONAL {
+?m cdm:manifestation_has_thumbnail ?thumbnail.}
+
+FILTER (?date = "2014-05-21"^^xsd:date)
+FILTER (lang(?llabel)=?lcode)
+FILTER (lang(?slabel)=?lcode)
+FILTER (lang(?clabel)=?lcode)
+FILTER (lang(?alabel)=?lcode)
+}
+}
+
+GROUP BY ?uri ?title ?lang ?date ?mtype ?thumbnail
+ORDER BY ?date ?uri ?lang ?mtype

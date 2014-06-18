@@ -1,0 +1,14 @@
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX ORACLE_SEM_FS_NS: <http://oracle.com/semtech#ALLOW_DUP=TRUE,DEGREE=4>
+
+SELECT (group_concat(distinct(?identifier); separator=' ') AS ?ids) ?cellarURI WHERE 
+{ 
+ ?cellarURI owl:sameAs ?pid. 
+ {?pid cdm:work_id_document ?identifier.}
+ UNION
+ {?pid cdm:dossier_identifier ?identifier.}
+}
+
+GROUP BY ?cellarURI
+ORDER BY ?ids

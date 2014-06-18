@@ -1,0 +1,17 @@
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+PREFIX cdma: <http://publications.europa.eu/ontology/annotation#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> 
+
+PREFIX ORACLE_SEM_FS_NS: <http://oracle.com/semtech#ALLOW_DUP=T,midtier_cache,DOP=4,qid=123> 
+
+
+select distinct ?s ?as 
+WHERE { 
+?s a cdm:resource_legal. ?cellar owl:sameAs ?s; owl:sameAs ?as. 
+FILTER (regex(str(?s), "^http://cellar-test.publications.europa.eu/resource/celex/")) 
+FILTER NOT EXISTS { ?s cdm:resource_legal_id_celex ?w} 
+FILTER NOT EXISTS { ?as cdm:resource_legal_id_celex ?w. } 
+
+} 

@@ -1,0 +1,46 @@
+#DEFINE input:inference "cdm_rule_set"
+#DEFINE input:same-as "yes"
+
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX at: <http://publications.europa.eu/ontology/authority/>
+
+SELECT 
+?uri ?date ?title ?l ?mtype ?thumbnail
+(group_concat(distinct ?pid;separator=";") as ?ids) 
+(group_concat(distinct ?coll;separator=";") as ?collections) 
+(group_concat(distinct ?author;separator=";") as ?authors)
+(group_concat(distinct ?subject;separator=";") as ?subjects) 
+#(group_concat(distinct ?item;separator=";") as ?documents) 
+{
+SELECT distinct ?uri ?pid ?coll ?author ?subject ?date ?title ?l ?mtype ?item ?thumbnail
+WHERE {
+
+?uri cdm:work_date_document ?date;
+   cdm:work_part_of_collection_document ?coll;
+   cdm:work_created_by_agent ?author;
+   cdm:is_about ?subject;
+   cdm:work_id_document ?pid.
+
+?e cdm:expression_belongs_to_work ?uri;
+   cdm:expression_uses_language ?l;
+   cdm:expression_title ?title.
+
+?m cdm:manifestation_manifests_expression ?ex;
+   cdm:manifestation_type ?mtype.
+
+?ce owl:sameAs ?ex; owl:sameAs ?e.
+?cm owl:sameAs ?m; cdm:manifestation_has_item ?item.
+
+
+OPTIONAL {
+?m cdm:manifestation_has_thumbnail ?thumbnail.}
+
+#FILTER (?date >= "2014-03-13"^^xsd:date)
+}
+}
+GROUP BY ?uri ?title ?l ?date ?mtype ?thumbnail
+ORDER BY ?date ?uri ?l ?mtype
