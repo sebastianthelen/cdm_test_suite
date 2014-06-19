@@ -51,7 +51,7 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX at: <http://publications.europa.eu/ontology/authority/>
 
-SELECT ?c group_concat(distinct ?id) WHERE { 
+SELECT ?c group_concat(distinct ?id; separator=' ') WHERE { 
 
 ?s a cdm:case-law; cdm:work_date_document ?date; cdm:work_id_document ?id.
 ?c owl:sameAs ?s; owl:sameAs ?sa.
@@ -66,6 +66,8 @@ PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX cdma: <http://publications.europa.eu/ontology/annotation#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# alternatively SELECT ?p (count(*) as ?count) because of Virtuoso’s current count(distinct(*)) bug
 
 SELECT   ?p (count(DISTINCT *) as ?count) 
 WHERE {  
