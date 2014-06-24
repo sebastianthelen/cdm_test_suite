@@ -1,4 +1,4 @@
-***** CDM - SPARQL TESTSUITE *****
+﻿***** CDM - SPARQL TESTSUITE *****
 
 #QUERY 1:
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
@@ -152,5 +152,34 @@ WHERE {
   ?class rdfs:subClassOf* ?domain . 
   ?prop rdfs:domain ?domain . 
 } 
+
+#QUERY 8:
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+
+SELECT DISTINCT ?class ?prop ?domain ?exactcard ?mincard ?maxcard
+WHERE {
+  { ?prop a owl:DatatypeProperty }
+  UNION
+  { ?prop a owl:ObjectProperty } .
+  ?class rdfs:subClassOf+ cdm:resource_legal .
+  ?class rdfs:subClassOf* ?domain .
+  ?prop rdfs:domain ?domain .
+  OPTIONAL {
+    ?s1 owl:onProperty ?prop ;
+    owl:cardinality ?exactcard .
+  }
+  OPTIONAL {
+    ?s2 owl:onProperty ?prop ;
+    owl:maxCardinality ?maxcard .
+  }
+  OPTIONAL {
+    ?s3 owl:onProperty ?prop ;
+    owl:minCardinality ?mincard .
+  }
+}
+ORDER BY ?class ?domain ?prop
+
 ORDER BY ?class ?domain 
 
