@@ -13,7 +13,7 @@ FILTER (!sameTerm(?as,?o))
 #QUERY 2: This query enumerates all works and dossier specifying their cellar URI together with all related identifiers
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-SELECT (group_concat(distinct(?identifier); separator=' ') AS ?ids) ?cellarURI WHERE 
+SELECT (group_concat(distinct(?identifier); separator=" ") AS ?ids) ?cellarURI WHERE 
 { 
  ?cellarURI owl:sameAs ?pid. 
  {?pid cdm:work_id_document ?identifier.}
@@ -44,7 +44,7 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX at: <http://publications.europa.eu/ontology/authority/>
-SELECT ?c group_concat(distinct ?id; separator=' ') WHERE { 
+SELECT ?c (group_concat(distinct ?id; separator=" ") as ?ids) WHERE { 
 ?s a cdm:case-law; cdm:work_date_document ?date; cdm:work_id_document ?id.
 ?c owl:sameAs ?s; owl:sameAs ?sa.
 FILTER NOT EXISTS { ?s cdm:ecli ?o }
@@ -183,11 +183,11 @@ SELECT DISTINCT ?oj ?act ?celex ?manif ?page_first ?page_last ?date_pub ?oj_id
 WHERE {
 ?act cdm:published_in ?oj.
 ?oj cdm:identifier ?oj_id.
-?oj cdm:official-journal_number  "010"^^xsd:positiveInteger.
+?oj cdm:official-journal_number  "337"^^xsd:positiveInteger.
 ?oj cdm:part_of <http://publications.europa.eu/resource/authority/document-collection/OJ-C>.
 ?act cdm:work_has_expression ?expr.
 ?expr cdm:expression_uses_language <http://publications.europa.eu/resource/authority/language/ENG>.
-?manif cdm:manifests ?expr . ?manif cdm:manifestation_type "print".
+?manif cdm:manifests ?expr . ?manif cdm:manifestation_type "print"^^xsd:string.
 ?manif cdm:page_first ?page_first.
 ?manif cdm:page_last ?page_last.
 ?oj cdm:date_publication ?date_pub.
