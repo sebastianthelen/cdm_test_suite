@@ -33,5 +33,5 @@ SELECT distinct ?a WHERE { ?a a cdm:expression; cdm:manifested_by ?b; cdm:belong
 
 for i in `seq 1 12`;
 do
-    xsltproc -o results/normalized_sparql$i.xml ../extract_bindings.xslt results/sparql$i.xml;
+    xsltproc -o results/result$i.xml ../extract_bindings.xslt results/sparql$i.xml;
 done
