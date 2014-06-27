@@ -202,7 +202,7 @@ FILTER NOT EXISTS { ?uri cdm:work_date_creation_legacy ?cd }
 }
 order by ?uri
 
-#QUERY 12: This query retrieves all works published after 2011-12-31 that do not have a pdf manifestation for every related expresssion
+#QUERY 12: This query retrieves all works published after 2011-12-31 that don not have a pdf manifestation for every related expresssion
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
