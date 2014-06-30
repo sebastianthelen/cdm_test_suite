@@ -23,11 +23,11 @@ query[9]='PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> PREFIX xsd: 
 query[10]='PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> select distinct ?uri  WHERE { ?uri cdm:work_date_document ?d. FILTER NOT EXISTS { ?uri cdm:work_date_creation_legacy ?cd } } order by ?uri'
 query[11]='PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> PREFIX owl: <http://www.w3.org/2002/07/owl#> PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> SELECT distinct ?a  WHERE { ?a a cdm:expression; cdm:manifested_by ?b; cdm:belongs_to ?w. ?w cdm:work_date_document ?d. FILTER ( ?d > "2011-12-31"^^xsd:date) {?b a cdm:manifestation_official-journal} UNION {?b a cdm:manifestation_official-journal_part} MINUS {?c a cdm:manifestation; cdm:manifestation_type ?t; cdm:manifests ?a. FILTER regex(?t, "pdf")}}'
 
-for j in 0 1 2
+for j in 0 1 2 3 4
 do
 	for i in 0 1 2 3 4 5 6 7 8 9 10 11
 	do
-	time (curl -G --silent --header "Accept: application/sparql-results+xml" --header "X-Requested-With:XMLHttpRequest" --header "Authorization:Basic YWRtaW46YWRtaW4=" --header "SD-Connection-String:reasoning=NONE" 'http://abel:5820/annex/cdmDB/sparql/query' --data-urlencode 'query='"${query[$i]}"'' > results/sparql$i-$j.xml) 2>>timing$j.log
+	time (curl -G --silent --max-time '300' --header "Accept: application/sparql-results+xml" --header "X-Requested-With:XMLHttpRequest" --header "Authorization:Basic YWRtaW46YWRtaW4=" --header "SD-Connection-String:reasoning=NONE" 'http://abel:5820/annex/cdmDB/sparql/query' --data-urlencode 'query='"${query[$i]}"'' > results/sparql$i-$j.xml) 2>>timing$j.log
 	xsltproc -o results/result$i-$j.xml ../extract_bindings.xslt results/sparql$i-$j.xml;
 	done
 done
