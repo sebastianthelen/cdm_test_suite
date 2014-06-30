@@ -6,7 +6,7 @@
 #  Created by S. Thelen, P. Gratz on 30/06/14.
 #
 
-rm timing*.log
+rm log.csv
 rm -rf results
 mkdir results
 
@@ -27,7 +27,10 @@ for j in 0 1 2 3 4
 do
 	for i in 0 1 2 3 4 5 6 7 8 9 10 11
 	do
-	time (curl -G --silent --max-time '300' --header "Accept: application/sparql-results+xml" 'http://opsrv603:8282/joseki/sparql' --data-urlencode 'query='"${query[$i]}"'' > results/sparql$i-$j.xml) 2>>timing$j.log
-	xsltproc -o results/result$i-$j.xml ../extract_bindings.xslt results/sparql$i-$j.xml;
+	printf "%d,%d," "$j" "$i" >> log.csv
+	t=$((/usr/bin/time -f'%e' curl -G --silent --max-time '300' --header "Accept: application/sparql-results+xml" 'http://opsrv603:8282/joseki/sparql' --data-urlencode 'query='"${query[$i]}"'' > results/sparql$i-$j.xml) 2>&1)
+	printf "%s," "$t" >> log.csv
+	xsltproc ../extract_bindings.xslt results/sparql$i-$j.xml >> log.csv;
+	printf "\n" >> log.csv
 	done
 done
