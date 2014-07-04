@@ -1,6 +1,6 @@
 ﻿***** CDM - SPARQL TESTSUITE *****
 
-#QUERY 1: This query selects all consolidated acts that have an annotation related to the property "consolidates" which uses a "sameAs" as annotation source.
+#QUERY 0: This query selects all consolidated acts that have an annotation related to the property "consolidates" which uses a "sameAs" as annotation source.
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 SELECT DISTINCT ?s WHERE {
@@ -10,7 +10,7 @@ SELECT DISTINCT ?s WHERE {
 FILTER (!sameTerm(?as,?o))
 }
 
-#QUERY 2: This query enumerates all works and dossier specifying their cellar URI together with all related identifiers
+#QUERY 1: This query enumerates all works and dossier specifying their cellar URI together with all related identifiers
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 SELECT (group_concat(distinct(?identifier); separator=" ") AS ?ids) ?cellarURI WHERE 
@@ -23,7 +23,7 @@ SELECT (group_concat(distinct(?identifier); separator=" ") AS ?ids) ?cellarURI W
 GROUP BY ?cellarURI
 ORDER BY ?ids
 
-#QUERY 3: This query selects all legal resources that have a celex based URI but no property "resource_legal_id_celex"
+#QUERY 2: This query selects all legal resources that have a celex based URI but no property "resource_legal_id_celex"
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
 PREFIX owl: <http://www.w3.org/2002/07/owl#> 
 PREFIX cdma: <http://publications.europa.eu/ontology/annotation#> 
@@ -37,7 +37,7 @@ FILTER NOT EXISTS { ?s cdm:resource_legal_id_celex ?w}
 FILTER NOT EXISTS { ?as cdm:resource_legal_id_celex ?w. } 
 } 
 
-#QUERY 4: This query selects all case laws without an ecli
+#QUERY 3: This query selects all case laws without an ecli
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -52,7 +52,7 @@ FILTER NOT EXISTS { ?sa cdm:ecli ?o }
 }
 GROUP BY ?c
 
-#QUERY 5: This query enumerates all properties used on work, expression and manifestation level for works published in 2013
+#QUERY 4: This query enumerates all properties used on work, expression and manifestation level for works published in 2013
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX cdma: <http://publications.europa.eu/ontology/annotation#>
@@ -67,7 +67,7 @@ WHERE {
 GROUP BY ?p
 ORDER BY ?p
 
-#QUERY 6: This query lists the following properties for each work published on the 2014-05-21: work-URI, work-identifiers, date of publication, title, subject, author, manifestation_type, items, thumbnail
+#QUERY 5: This query lists the following properties for each work published on the 2014-05-21: work-URI, work-identifiers, date of publication, title, subject, author, manifestation_type, items, thumbnail
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -115,7 +115,7 @@ FILTER (lang(?alabel)=?lcode)
 GROUP BY ?uri ?title ?lang ?date ?mtype ?thumbnail
 ORDER BY ?date ?uri ?lang ?mtype
 
-#Query 7: This query list all classes which are subclass of resource legal together with all suitable properties
+#Query 6: This query list all classes which are subclass of resource legal together with all suitable properties
 PREFIX owl: <http://www.w3.org/2002/07/owl#> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
@@ -127,7 +127,7 @@ WHERE {
 }
 ORDER BY ?class ?domain  
 
-#QUERY 8: This query list all classes which are subclass of resource legal together with all suitable properties and cardinality restrictions
+#QUERY 7: This query list all classes which are subclass of resource legal together with all suitable properties and cardinality restrictions
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
@@ -151,7 +151,7 @@ WHERE {
 }
 ORDER BY ?class ?domain ?prop
 
-#QUERY 9: This query enumerates all OJ acts from 2012, with some basic metadata like publishing date, identifier etc.
+#QUERY 8: This query enumerates all OJ acts from 2012, with some basic metadata like publishing date, identifier etc.
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT DISTINCT ?oj ?act ?celex ?manif ?page_first ?page_last ?date_pub ?oj_id 
@@ -170,7 +170,7 @@ FILTER ( ?date_pub <= "2013-01-01"^^xsd:date)
 FILTER regex(?oj_id, "^oj:", "i") 
 }
 
-#QUERY 10: This query enumerates all acts published in a OJ with number 10
+#QUERY 9: This query enumerates all acts published in a OJ with number 10
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT DISTINCT ?oj ?act ?celex ?manif ?page_first ?page_last ?date_pub ?oj_id 
@@ -188,7 +188,7 @@ WHERE {
 OPTIONAL {?act cdm:id_celex ?celex }.
 FILTER regex(?oj_id, "^oj:", "i") }
 
-#QUERY 11: This query enumerates all works that do not have a legacy creation date 
+#QUERY 10: This query enumerates all works that do not have a legacy creation date 
 PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
 select distinct ?uri where {
 ?uri cdm:work_date_document ?d. 
@@ -210,4 +210,47 @@ FILTER ( ?d > "2011-12-31"^^xsd:date)
 UNION
 {?b a cdm:manifestation_official-journal_part}
 MINUS {?c a cdm:manifestation; cdm:manifestation_type ?t; cdm:manifests ?a. FILTER regex(?t, "pdf")}
+}
+
+#QUERY 11: This query retrieves some basic metadata for all OJs published in 2001
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT DISTINCT ?number ?class ?collection ?date 
+WHERE {
+?uri cdm:official-journal_number ?number;
+   cdm:official-journal_year "2001"^^xsd:gYear;
+   cdm:official-journal_class ?class;
+   cdm:official-journal_part_of_collection_document ?collection;
+   cdm:date_publication ?date.
+}
+ORDER BY ?number ?date ?class ?collection
+
+#QUERY 12: This query retrieves information about the legal basis and the French title for three different documents
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX cdma: <http://publications.europa.eu/ontology/annotation#>
+SELECT DISTINCT 
+?id ?title ?basis
+?article ?paragraph ?subparagraph ?chapter ?indent ?point ?protocol ?sentence ?annex ?comment
+WHERE 
+  { ?uri cdm:resource_legal_id_celex ?id.
+    ?uri cdm:resource_legal_based_on_resource_legal ?basis.
+    ?uri cdm:work_has_expression ?e.
+    ?e cdm:expression_uses_language <http://publications.europa.eu/resource/authority/language/FRA>.
+    ?e cdm:expression_title ?title.
+    ?cellarURI owl:sameAs ?uri; owl:sameAs ?src.
+     OPTIONAL {?b owl:annotatedSource ?src; owl:annotatedTarget ?basis.
+   ?b owl:annotatedProperty cdm:resource_legal_based_on_resource_legal.
+   OPTIONAL { ?b cdma:article ?article }
+   OPTIONAL { ?b cdma:paragraph ?paragraph }
+   OPTIONAL { ?b cdma:subparagraph ?subparagraph }
+   OPTIONAL { ?b cdma:chapter ?chapter }
+   OPTIONAL { ?b cdma:indent ?indent }
+   OPTIONAL { ?b cdma:point ?point }
+   OPTIONAL { ?b cdma:protocol ?protocol }
+   OPTIONAL { ?b cdma:sentence ?sentence }
+   OPTIONAL { ?b cdma:annex ?annex }
+   OPTIONAL { ?b cdma:comment_on_legal_basis ?comment }}
+   FILTER ( ?id="32012L0001"^^xsd:string || ?id="32012L0003"^^xsd:string || ?id="32012L0002"^^xsd:string)
 }
