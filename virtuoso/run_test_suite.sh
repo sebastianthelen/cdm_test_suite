@@ -31,7 +31,7 @@ do
 	for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13
 	do
 	printf "%d,%d," "$j" "$i" >> log.csv
-	t=$((/usr/bin/time -f'%e' curl -G --silent --max-time '300' --header "Accept: application/sparql-results+xml" 'http://abel:8890/sparql' --data-urlencode 'query='"${query[$i]}"'' > results/sparql$i-$j.xml) 2>&1)
+	t=$((/usr/bin/time -f'%e' curl -G --silent --max-time '600' --header "Accept: application/sparql-results+xml" 'http://abel:8890/sparql' --data-urlencode 'query='"${query[$i]}"'' > results/sparql$i-$j.xml) 2>&1)
 	printf "%s," "$t" >> log.csv
 	xsltproc ../extract_bindings.xslt results/sparql$i-$j.xml >> log.csv;
 	printf "\n" >> log.csv
