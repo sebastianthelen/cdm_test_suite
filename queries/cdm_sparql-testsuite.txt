@@ -254,3 +254,141 @@ WHERE
    OPTIONAL { ?b cdma:comment_on_legal_basis ?comment }}
    FILTER ( ?id="32012L0001"^^xsd:string || ?id="32012L0003"^^xsd:string || ?id="32012L0002"^^xsd:string)
 }
+#QUERY 13: 
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX cdma: <http://publications.europa.eu/ontology/annotation#> 
+SELECT DISTINCT ?id ?title ?basis ?article ?paragraph ?subparagraph ?chapter ?indent ?point ?protocol ?sentence ?annex ?comment 
+WHERE { 
+?uri cdm:resource_legal_id_celex ?id. 
+?uri cdm:resource_legal_based_on_resource_legal ?basis. 
+?uri cdm:work_has_expression ?e. 
+?e cdm:expression_uses_language <http://publications.europa.eu/resource/authority/language/FRA>. 
+?e cdm:expression_title ?title. 
+?cellarURI owl:sameAs ?uri; owl:sameAs ?src.   
+OPTIONAL {?b owl:annotatedSource ?src; owl:annotatedTarget ?basis. ?b owl:annotatedProperty cdm:resource_legal_based_on_resource_legal. OPTIONAL { ?b cdma:article ?article } 
+OPTIONAL { ?b cdma:paragraph ?paragraph } 
+OPTIONAL { ?b cdma:subparagraph ?subparagraph } 
+OPTIONAL { ?b cdma:chapter ?chapter } 
+OPTIONAL { ?b cdma:indent ?indent } 
+OPTIONAL { ?b cdma:point ?point } 
+OPTIONAL { ?b cdma:protocol ?protocol } 
+OPTIONAL { ?b cdma:sentence ?sentence } 
+OPTIONAL { ?b cdma:annex ?annex } 
+OPTIONAL { ?b cdma:comment_on_legal_basis ?comment }} 
+FILTER ( ?id="32012L0001"^^xsd:string || ?id="32012L0003"^^xsd:string || ?id="32012L0002"^^xsd:string)}
+
+#QUERY 14: LH daily extraction queries (the date should be "today") (this one works in Joseki-Prod)
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX cdma: <http://publications.europa.eu/ontology/annotation#> 
+PREFIX cmr: <http://publications.europa.eu/ontology/cdm/cmr#>
+SELECT DISTINCT ?uri WHERE { ?uri ^owl:sameAs ?s; a cdm:work. ?s cmr:lastModificationDate ?date.
+FILTER (?date >= "2014-06-25T00:00:00.000+02:00"^^xsd:dateTime && ?date <= "2014-06-26T00:00:00.000+02:00"^^xsd:dateTime)
+}
+
+#QUERY 15: LH daily extraction queries (the date should be "today") (this one does not work in Joseki-Prod):
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#> 
+PREFIX owl: <http://www.w3.org/2002/07/owl#> 
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> 
+PREFIX cdma: <http://publications.europa.eu/ontology/annotation#> 
+PREFIX cmr: <http://publications.europa.eu/ontology/cdm/cmr#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?cw WHERE {  
+?cw owl:sameAs/cdm:work_has_expression*/cdm:expression_manifested_by_manifestation*/^owl:sameAs/cmr:lastModificationDate ?date; owl:sameAs/rdf:type cdm:work.
+FILTER (?date >= "2014-06-25T00:00:00.000+02:00"^^xsd:dateTime && ?date <= "2014-06-26T00:00:00.000+02:00"^^xsd:dateTime)}
+
+#QUERY 16: LH daily extraction queries as they are working nowadays (the date should be "today")
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?uri
+WHERE { ?uri cdm:work_date_creation_legacy "2013-03-21"^^xsd:date }
+
+#QUERY 17: All works related to a Eurovoc concept (it works quite well in joseki-prod): 
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+SELECT DISTINCT ?work
+WHERE
+{
+  ?work cdm:is_about <http://eurovoc.europa.eu/5405> .
+}
+ORDER BY ?work
+
+#QUERY 18: Get all the eurovoc terms and the # of acts that refer to them (this used to work, now returns an error 500):
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?eurovoc count( ?acta ) 
+WHERE
+{
+  # relationship between concept and act; this works also for NALs
+  ?eurovoc cdm:subject_of ?acta .
+  # to be sure it's a eurovoc term
+  ?eurovoc rdf:type <http://eurovoc.europa.eu/schema#ThesaurusConcept> .
+  # to be sure it's an act
+  ?acta cdm:published_in ?oj
+}
+GROUP BY ?eurovoc 
+ORDER BY desc( ?eurovoc )
+
+#QUERY 19: Today's OJ and signature (the date should be "today")
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT DISTINCT ?oj ?ojsig
+WHERE
+{
+  ?oj cdm:date_creation "2013-06-25"^^<http://www.w3.org/2001/XMLSchema#date> .
+  ?oj a cdm:official-journal .
+  ?oj cdm:work_has_expression ?exp .
+  ?exp cdm:manifested_by ?manif .
+  ?ojsig cdm:signs ?manif .
+}
+
+#QUERY 20: Get all LV from all today's OJs (date should be "today")
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT DISTINCT ?exp
+WHERE 
+{ 
+  ?oj cdm:date_creation "2013-06-25"^^<http://www.w3.org/2001/XMLSchema#date> .
+  ?oj a cdm:official-journal .
+  ?oj cdm:work_has_expression ?exp .
+} 
+ORDER BY ?exp
+
+#QUERY 21: Get all manif from all today's OJs in a specific LV, ex. English (date should be "today")
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX lang: <http://publications.europa.eu/resource/authority/language/>
+SELECT DISTINCT  ?manif 
+WHERE 
+{ 
+  ?oj cdm:date_creation "2013-06-25"^^<http://www.w3.org/2001/XMLSchema#date> .
+  ?oj a cdm:official-journal .
+  ?oj cdm:work_has_expression ?exp .
+  ?manif cdm:manifests ?exp .
+  ?exp cdm:expression_uses_language lang:ENG .
+} 
+ORDER BY ?manif
+
+#QUERY 22: Stats: works per sector
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+SELECT ?sector count( DISTINCT ?work )
+WHERE 
+{
+  ?work cdm:id_sector ?sector .
+}
+GROUP BY ?sector
+ORDER BY ?sector
+
+#QUERY 23: Stats about quality annotations (DATMIS, DATAMB, DATWRO):
+PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
+PREFIX cdma: <http://publications.europa.eu/ontology/annotation#>
+SELECT ?code count( distinct ?uri)
+WHERE 
+{ 
+  [] owl:annotatedSource ?uri; cdma:quality_issue ?code.
+  FILTER (?code in("DATMIS","DATWRO","DATAMB"))
+}
+GROUP BY ?code
+ORDER BY ?code
